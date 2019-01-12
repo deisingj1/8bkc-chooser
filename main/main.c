@@ -102,7 +102,7 @@ void handleCharging() {
 	int fixFull=0;
 
 	//Force brightness low to decrease chance of burn-in
-	ssd1331SetBrightness(32);
+	//ssd1331SetBrightness(32);
 	printf("Detected charger.\n");
 	guiInit();
 	guiCharging();
@@ -223,7 +223,7 @@ void handleKeyLock() {
 			if ((!(oldbtn&KC_BTN_A)) && (btn&KC_BTN_A)) {
 				uint32_t v=kchal_rtc_reg_bootup_val();
 				v=(v&0xffffff)|0xa5000000;
-				kchal_set_rtc_reg(v);
+				//kchal_set_rtc_reg(v);
 				kchal_boot_into_new_app();
 			}
 		}
@@ -261,8 +261,8 @@ int app_main(void)
 	if (kchal_get_chg_status()!=KC_CHG_NOCHARGER && ((r&0x100)==0)) handleCharging();
 	if ((r&0xff000000)==0xA6000000) handleKeyLock();
 
-//	esp_log_level_set("*", ESP_LOG_INFO);
-//	esp_log_level_set("appfs", ESP_LOG_DEBUG);
+   esp_log_level_set("*", ESP_LOG_INFO);
+   esp_log_level_set("appfs", ESP_LOG_DEBUG);
 
 	appfsDump();
 	delete_temp_files();
@@ -276,13 +276,14 @@ int app_main(void)
 	ESP_ERROR_CHECK( esp_wifi_set_mode(WIFI_MODE_AP) );
 	wifi_config_t ap_config = {
 		.ap = {
-			.ssid = "pkspr",
+			.ssid = "testap1234",
 			.authmode=WIFI_AUTH_OPEN,
 			.max_connection = 2,
 			.beacon_interval=200
 		}
 	};
-	uint8_t channel=5;
+	printf("\nAP Config finished, SSID: %s",ap_config.ap.ssid);
+	uint8_t channel=1;
 	nvs_handle nvsHandle=NULL;
 	if (nvs_open("8bkc", NVS_READWRITE, &nvsHandle)==ESP_OK) {
 		nvs_get_u8(nvsHandle, "channel", &channel);
